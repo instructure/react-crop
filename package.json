@@ -1,8 +1,8 @@
 {
-  "name": "react-crop",
+  "name": "@instructure/react-crop",
   "version": "4.0.2",
   "description": "An image cropper that moves the cropper rather than the image",
-  "repository": "https://github.com/instructure-react/react-crop",
+  "repository": "https://github.com/instructure/react-crop",
   "main": "dist/react-crop.js",
   "scripts": {
     "build": "webpack -p --config webpack.dist.config.js",
@@ -15,7 +15,7 @@
     "crop",
     "react-component"
   ],
-  "author": "Matthew Sessions <shichongrui@gmail.com> (http://www.matthewsessions.com/)",
+  "author": "Instructure <opensource@instructure.com> (http://www.instructure.com/)",
   "license": "MIT",
   "browserslist": "> 0.5%, not dead",
   "devDependencies": {
