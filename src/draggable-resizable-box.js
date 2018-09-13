@@ -1,9 +1,9 @@
 import React from 'react'
 
-export default React.createClass({
-  displayName: 'DraggableResizableBox',
+export default class extends React.Component {
+  static displayName = 'DraggableResizableBox';
 
-  propTypes: {
+  static propTypes = {
     aspectRatio: React.PropTypes.number.isRequired,
     width: React.PropTypes.number.isRequired,
     height: React.PropTypes.number.isRequired,
@@ -15,32 +15,32 @@ export default React.createClass({
     heightLabel: React.PropTypes.string,
     offsetXLabel: React.PropTypes.string,
     offsetYLabel: React.PropTypes.string
-  },
+  };
 
-  getDefaultProps () {
-    return {
-      widthLabel: 'Width',
-      heightLabel: 'Height',
-      offsetXLabel: 'Offset X',
-      offsetYLabel: 'Offset Y'
-    }
-  },
+  static defaultProps = {
+    widthLabel: 'Width',
+    heightLabel: 'Height',
+    offsetXLabel: 'Offset X',
+    offsetYLabel: 'Offset Y'
+  };
 
-  getInitialState () {
-    let [width, height] = this.preserveAspectRatio(this.props.width, this.props.height)
-    let centerYOffset = (this.props.height - height) / 2
-    let centerXOffset = (this.props.width - width) / 2
-    return {
+  constructor(props, context) {
+    super(props, context);
+    let [width, height] = this.preserveAspectRatio(props.width, props.height)
+    let centerYOffset = (props.height - height) / 2
+    let centerXOffset = (props.width - width) / 2
+
+    this.state = {
       top: centerYOffset,
       left: centerXOffset,
       bottom: centerYOffset,
       right: centerXOffset,
       width: width,
       height: height
-    }
-  },
+    };
+  }
 
-  componentDidMount () {
+  componentDidMount() {
     document.addEventListener('mousemove', this.eventMove)
     document.addEventListener('mouseup', this.eventEnd)
     document.addEventListener('touchmove', this.eventMove)
@@ -53,22 +53,22 @@ export default React.createClass({
       width: this.state.width,
       height: this.state.height
     })
-  },
+  }
 
-  componentWillUnmount () {
+  componentWillUnmount() {
     document.removeEventListener('mousemove', this.eventMove)
     document.removeEventListener('mouseup', this.eventEnd)
     document.removeEventListener('touchmove', this.eventMove)
     document.removeEventListener('touchend', this.eventEnd)
     document.removeEventListener('keydown', this.handleKey)
-  },
+  }
 
-  calculateDimensions ({top, left, bottom, right}) {
+  calculateDimensions = ({top, left, bottom, right}) => {
     return {width: this.props.width - left - right, height: this.props.height - top - bottom}
-  },
+  };
 
   // If you do this, be careful of constraints
-  preserveAspectRatio (width, height) {
+  preserveAspectRatio = (width, height) => {
     if(this.props.minConstraints) {
       width = Math.max(width, this.props.minConstraints[0])
       height = Math.max(height, this.props.minConstraints[1])
@@ -82,13 +82,13 @@ export default React.createClass({
     } else {
       return [width, height]
     }
-  },
+  };
 
-  constrainBoundary (side) {
+  constrainBoundary = (side) => {
     return side < 0 ? 0 : side
-  },
+  };
 
-  getClientCoordinates (evt) {
+  getClientCoordinates = (evt) => {
     return evt.touches ? {
       clientX: evt.touches[0].clientX,
       clientY: evt.touches[0].clientY
@@ -97,40 +97,40 @@ export default React.createClass({
       clientX: evt.clientX,
       clientY: evt.clientY
     }
-  },
+  };
 
-  eventMove (evt) {
+  eventMove = (evt) => {
     if (this.state.resizing) {
       this.onResize(evt)
     } else if (this.state.moving) {
       this.eventMoveBox(evt)
     }
-  },
+  };
 
-  eventEnd (evt) {
+  eventEnd = (evt) => {
     if (this.state.resizing) {
       this.stopResize(evt)
     } else if (this.state.moving) {
       this.stopMove(evt)
     }
-  },
+  };
 
   // Resize methods
-  startResize (corner, event) {
+  startResize = (corner, event) => {
     event.stopPropagation()
     event.preventDefault()
     this.setState({
       resizing: true,
       corner
     })
-  },
+  };
 
-  stopResize () {
+  stopResize = () => {
     this.setState({resizing: false})
-  },
+  };
 
   // resize strategies
-  nw (mousePos, boxPos) {
+  nw = (mousePos, boxPos) => {
     let pos = Object.assign({}, this.state, {
       top: this.constrainBoundary(mousePos.clientY - boxPos.top),
       left: this.constrainBoundary(mousePos.clientX - boxPos.left)
@@ -140,49 +140,52 @@ export default React.createClass({
     pos.top = this.props.height - pos.bottom - height
     pos.left = this.props.width - pos.right - width
     return pos
-  },
-  ne (mousePos, boxPos) {
-    let pos = Object.assign({}, this.state, {
-      top: this.constrainBoundary(mousePos.clientY - boxPos.top),
-      right: this.constrainBoundary(boxPos.right - mousePos.clientX)
-    })
-    let dimensions = this.calculateDimensions(pos)
-    let [width, height] = this.preserveAspectRatio(dimensions.width, dimensions.height)
-    pos.top = this.props.height - pos.bottom - height
-    pos.right = this.props.width - pos.left - width
-    return pos
-  },
-  se (mousePos, boxPos) {
-    let pos = Object.assign({}, this.state, {
-      bottom: this.constrainBoundary(boxPos.bottom - mousePos.clientY),
-      right: this.constrainBoundary(boxPos.right - mousePos.clientX)
-    })
-    let dimensions = this.calculateDimensions(pos)
-    let [width, height] = this.preserveAspectRatio(dimensions.width, dimensions.height)
-    pos.bottom = this.props.height - pos.top - height
-    pos.right = this.props.width - pos.left - width
-    return pos
-  },
-  sw (mousePos, boxPos) {
-    let pos = Object.assign({}, this.state, {
-      bottom: this.constrainBoundary(boxPos.bottom - mousePos.clientY),
-      left: this.constrainBoundary(mousePos.clientX - boxPos.left)
-    })
-    let dimensions = this.calculateDimensions(pos)
-    let [width, height] = this.preserveAspectRatio(dimensions.width, dimensions.height)
-    pos.bottom = this.props.height - pos.top - height
-    pos.left = this.props.width - pos.right - width
-    return pos
-  },
+  };
 
-  onResize (event) {
+  ne = (mousePos, boxPos) => {
+    let pos = Object.assign({}, this.state, {
+      top: this.constrainBoundary(mousePos.clientY - boxPos.top),
+      right: this.constrainBoundary(boxPos.right - mousePos.clientX)
+    })
+    let dimensions = this.calculateDimensions(pos)
+    let [width, height] = this.preserveAspectRatio(dimensions.width, dimensions.height)
+    pos.top = this.props.height - pos.bottom - height
+    pos.right = this.props.width - pos.left - width
+    return pos
+  };
+
+  se = (mousePos, boxPos) => {
+    let pos = Object.assign({}, this.state, {
+      bottom: this.constrainBoundary(boxPos.bottom - mousePos.clientY),
+      right: this.constrainBoundary(boxPos.right - mousePos.clientX)
+    })
+    let dimensions = this.calculateDimensions(pos)
+    let [width, height] = this.preserveAspectRatio(dimensions.width, dimensions.height)
+    pos.bottom = this.props.height - pos.top - height
+    pos.right = this.props.width - pos.left - width
+    return pos
+  };
+
+  sw = (mousePos, boxPos) => {
+    let pos = Object.assign({}, this.state, {
+      bottom: this.constrainBoundary(boxPos.bottom - mousePos.clientY),
+      left: this.constrainBoundary(mousePos.clientX - boxPos.left)
+    })
+    let dimensions = this.calculateDimensions(pos)
+    let [width, height] = this.preserveAspectRatio(dimensions.width, dimensions.height)
+    pos.bottom = this.props.height - pos.top - height
+    pos.left = this.props.width - pos.right - width
+    return pos
+  };
+
+  onResize = (event) => {
     let box = this.refs.box.parentElement.parentElement.getBoundingClientRect()
     let coordinates = this.getClientCoordinates(event)
     let position = this[this.state.corner](coordinates, box)
     this.resize(position, coordinates)
-  },
+  };
 
-  controlsResize (event) {
+  controlsResize = (event) => {
     let box = this.refs.box.parentElement.parentElement.getBoundingClientRect()
     let width = event.target.name === 'width' ? +event.target.value : +event.target.value * this.props.aspectRatio
     let height = event.target.name === 'height' ? +event.target.value : +event.target.value / this.props.aspectRatio
@@ -205,9 +208,9 @@ export default React.createClass({
     }
 
     this.resize(pos, coordinates)
-  },
+  };
 
-  resize (position, coordinates) {
+  resize = (position, coordinates) => {
     let dimensions = this.calculateDimensions(position)
     var widthChanged = dimensions.width !== this.state.width, heightChanged = dimensions.height !== this.state.height
     if (!widthChanged && !heightChanged) return
@@ -218,40 +221,40 @@ export default React.createClass({
         left: position.left
       }, dimensions)
     })
-  },
+  };
 
   // Move methods
-  startMove (evt) {
+  startMove = (evt) => {
     let {clientX, clientY} = this.getClientCoordinates(evt)
     this.setState({
       moving: true,
       clientX: clientX,
       clientY: clientY
     })
-  },
+  };
 
-  stopMove (evt) {
+  stopMove = (evt) => {
     this.setState({
       moving: false
     })
-  },
+  };
 
-  eventMoveBox (evt) {
+  eventMoveBox = (evt) => {
     evt.preventDefault()
     let {clientX, clientY} = this.getClientCoordinates(evt)
     let movedX = clientX - this.state.clientX
     let movedY = clientY - this.state.clientY
 
     this.moveBox(clientX, clientY, movedX, movedY)
-  },
+  };
 
-  controlsMoveBox (evt) {
+  controlsMoveBox = (evt) => {
     let movedX = evt.target.name === 'x' ? evt.target.value - this.state.left : 0
     let movedY = evt.target.name === 'y' ? evt.target.value - this.state.top : 0
     this.moveBox(0, 0, movedX, movedY)
-  },
+  };
 
-  moveBox (clientX, clientY, movedX, movedY) {
+  moveBox = (clientX, clientY, movedX, movedY) => {
     let position = {
       top: this.constrainBoundary(this.state.top + movedY),
       left: this.constrainBoundary(this.state.left + movedX),
@@ -281,9 +284,9 @@ export default React.createClass({
         left: position.left
       }, this.calculateDimensions(position))
     })
-  },
+  };
 
-  keyboardResize (change) {
+  keyboardResize = (change) => {
     if (this.state.right - change < 0) { return }
     if (this.state.bottom - change < 0) { return }
 
@@ -300,9 +303,9 @@ export default React.createClass({
       width,
       height
     })
-  },
+  };
 
-  handleKey (event) {
+  handleKey = (event) => {
     // safari doesn't support event.key, so fall back to keyCode
     if (event.shiftKey) {
       if (event.key === 'ArrowUp' || event.keyCode === 38) {
@@ -333,9 +336,9 @@ export default React.createClass({
         event.preventDefault()
       }
     }
-  },
+  };
 
-  render () {
+  render() {
     let style = {
       position: 'absolute',
       top: this.state.top,
@@ -427,4 +430,4 @@ export default React.createClass({
       </div>
     )
   }
-})
+}

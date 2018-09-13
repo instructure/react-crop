@@ -3,10 +3,10 @@ import DraggableResizableBox from './draggable-resizable-box'
 import toBlob from 'data-uri-to-blob'
 import './cropper.css'
 
-export default React.createClass({
-  displayName: 'Cropper',
+export default class extends React.Component {
+  static displayName = 'Cropper';
 
-  propTypes: {
+  static propTypes = {
     width: React.PropTypes.number.isRequired,
     height: React.PropTypes.number.isRequired,
     center: React.PropTypes.bool,
@@ -17,45 +17,41 @@ export default React.createClass({
     offsetYLabel: React.PropTypes.string,
     onImageLoaded: React.PropTypes.func,
     minConstraints: React.PropTypes.arrayOf(React.PropTypes.number)
-  },
+  };
 
-  getDefaultProps () {
-    return {
-      center: false,
-      width: 'Width',
-      height: 'Height',
-      offsetXLabel: 'Offset X',
-      offsetYLabel: 'Offset Y'
-    }
-  },
+  static defaultProps = {
+    center: false,
+    width: 'Width',
+    height: 'Height',
+    offsetXLabel: 'Offset X',
+    offsetYLabel: 'Offset Y'
+  };
 
-  getInitialState () {
-    return {
-      imageLoaded: false,
-      width: this.props.width,
-      height: this.props.height,
-      url: window.URL.createObjectURL(this.props.image)
-    }
-  },
+  state = {
+    imageLoaded: false,
+    width: this.props.width,
+    height: this.props.height,
+    url: window.URL.createObjectURL(this.props.image)
+  };
 
-  componentWillReceiveProps (nextProps) {
+  componentWillReceiveProps(nextProps) {
     if (this.props.image !== nextProps.image) {
       this.setState({
         url: window.URL.createObjectURL(nextProps.image),
         imageLoaded: false
       })
     }
-  },
+  }
 
-  shouldComponentUpdate (nextProps, nextState) {
+  shouldComponentUpdate(nextProps, nextState) {
     let {image} = this.props
     return nextProps.image.size !== image.size ||
         nextProps.image.name !== image.name ||
         nextProps.image.type !== image.type ||
         nextState.imageLoaded !== this.state.imageLoaded
-  },
+  }
 
-  onLoad (evt) {
+  onLoad = (evt) => {
     let box = this.refs.box.getBoundingClientRect()
     this.setState({
       imageLoaded: true,
@@ -65,9 +61,9 @@ export default React.createClass({
       let img = this.refs.image
       this.props.onImageLoaded && this.props.onImageLoaded(img)
     })
-  },
+  };
 
-  cropImage () {
+  cropImage = () => {
     return new Promise((resolve, reject) => {
       let img = new Image()
       img.onload = () => {
@@ -93,13 +89,13 @@ export default React.createClass({
       }
       img.src = window.URL.createObjectURL(this.props.image)
     })
-  },
+  };
 
-  onChange (offset, dimensions) {
+  onChange = (offset, dimensions) => {
     this.setState({offset, dimensions})
-  },
+  };
 
-  render () {
+  render() {
     return (
       <div
         ref='box'
@@ -138,4 +134,4 @@ export default React.createClass({
       </div>
     )
   }
-})
+}
