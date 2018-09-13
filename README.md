@@ -11,10 +11,6 @@ import React, { Component } from 'react';
 import Cropper from 'react-crop';
 import 'react-crop/css';
 
-// You'll need to use async functions
-import "babel-core/register";
-import "babel-polyfill";
-
 export default class MyComponent extends Component {
     constructor() {
         super();

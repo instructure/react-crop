@@ -1,22 +1,22 @@
+import PropTypes from 'prop-types';
 import React from 'react'
 import DraggableResizableBox from './draggable-resizable-box'
 import toBlob from 'data-uri-to-blob'
 import './cropper.css'
 
-export default class extends React.Component {
-  static displayName = 'Cropper';
+export default class Cropper extends React.Component {
 
   static propTypes = {
-    width: React.PropTypes.number.isRequired,
-    height: React.PropTypes.number.isRequired,
-    center: React.PropTypes.bool,
-    image: React.PropTypes.any,
-    widthLabel: React.PropTypes.string,
-    heightLabel: React.PropTypes.string,
-    offsetXLabel: React.PropTypes.string,
-    offsetYLabel: React.PropTypes.string,
-    onImageLoaded: React.PropTypes.func,
-    minConstraints: React.PropTypes.arrayOf(React.PropTypes.number)
+    width: PropTypes.number.isRequired,
+    height: PropTypes.number.isRequired,
+    center: PropTypes.bool,
+    image: PropTypes.any,
+    widthLabel: PropTypes.string,
+    heightLabel: PropTypes.string,
+    offsetXLabel: PropTypes.string,
+    offsetYLabel: PropTypes.string,
+    onImageLoaded: PropTypes.func,
+    minConstraints: PropTypes.arrayOf(PropTypes.number)
   };
 
   static defaultProps = {

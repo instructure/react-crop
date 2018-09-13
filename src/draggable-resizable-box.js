@@ -1,20 +1,20 @@
+import PropTypes from 'prop-types';
 import React from 'react'
 
-export default class extends React.Component {
-  static displayName = 'DraggableResizableBox';
+export default class DraggableResizableBoxextends extends React.Component {
 
   static propTypes = {
-    aspectRatio: React.PropTypes.number.isRequired,
-    width: React.PropTypes.number.isRequired,
-    height: React.PropTypes.number.isRequired,
-    onChange: React.PropTypes.func,
-    offset: React.PropTypes.array,
-    minConstraints: React.PropTypes.array,
-    children: React.PropTypes.node,
-    widthLabel: React.PropTypes.string,
-    heightLabel: React.PropTypes.string,
-    offsetXLabel: React.PropTypes.string,
-    offsetYLabel: React.PropTypes.string
+    aspectRatio: PropTypes.number.isRequired,
+    width: PropTypes.number.isRequired,
+    height: PropTypes.number.isRequired,
+    onChange: PropTypes.func,
+    offset: PropTypes.array,
+    minConstraints: PropTypes.array,
+    children: PropTypes.node,
+    widthLabel: PropTypes.string,
+    heightLabel: PropTypes.string,
+    offsetXLabel: PropTypes.string,
+    offsetYLabel: PropTypes.string
   };
 
   static defaultProps = {
