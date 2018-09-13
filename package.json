@@ -4,6 +4,7 @@
   "description": "An image cropper that moves the cropper rather than the image",
   "repository": "https://github.com/instructure/react-crop",
   "main": "dist/react-crop.js",
+  "public": true,
   "scripts": {
     "build": "webpack -p --config webpack.dist.config.js",
     "start": "webpack-dev-server -d --content-base docs/ docs/index.js",
