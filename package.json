@@ -38,9 +38,9 @@
     "webpack-dev-server": "1.10.1"
   },
   "dependencies": {
-    "autoprefixer": "5.2.0",
-    "data-uri-to-blob": "0.0.4",
-    "postcss-cli": "2.0.0"
+    "autoprefixer": ">=5.2.0",
+    "data-uri-to-blob": "^0.0.4",
+    "postcss-cli": ">=2.0.0"
   },
   "peerDependencies": {
     "react": ">=0.14.0"
