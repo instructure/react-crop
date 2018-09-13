@@ -18,7 +18,7 @@ class Wrapper extends React.Component {
   }
 
   crop = () => {
-    this.refs.crop.cropImage().then(image => {
+    return this.cropper.cropImage().then(image => {
       this.setState({
         previewUrl: window.URL.createObjectURL(image)
       })
@@ -26,7 +26,7 @@ class Wrapper extends React.Component {
   }
 
   clear = () => {
-    this.refs.file.value = null
+    this.file.value = null
     this.setState({
       previewUrl: null,
       image: null
@@ -47,12 +47,12 @@ class Wrapper extends React.Component {
   render() {
     return (
       <div>
-        <input ref="file" type="file" onChange={this.onChange} />
+        <input ref={e => this.file = e} type="file" onChange={this.onChange} />
         <div className="Wrapper">
           {this.state.image && (
             <div>
               <Cropper
-                ref="crop"
+                ref={e => this.cropper = e}
                 image={this.state.image}
                 width={WIDTH}
                 height={HEIGHT}

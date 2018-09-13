@@ -197,14 +197,14 @@ export default class DraggableResizableBoxextends extends React.Component {
   }
 
   onResize = event => {
-    let box = this.refs.box.parentElement.parentElement.getBoundingClientRect()
+    let box = this.box.parentElement.parentElement.getBoundingClientRect()
     let coordinates = this.getClientCoordinates(event)
     let position = this[this.state.corner](coordinates, box)
     this.resize(position, coordinates)
   }
 
   controlsResize = event => {
-    let box = this.refs.box.parentElement.parentElement.getBoundingClientRect()
+    let box = this.box.parentElement.parentElement.getBoundingClientRect()
     let width =
       event.target.name === 'width'
         ? +event.target.value
@@ -411,7 +411,7 @@ export default class DraggableResizableBoxextends extends React.Component {
     }
 
     return (
-      <div ref="box" className="DraggableResizable">
+      <div ref={e => (this.box = e)} className="DraggableResizable">
         <div className="DraggableResizable-controls">
           <label>
             {this.props.offsetXLabel}

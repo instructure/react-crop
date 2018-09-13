@@ -53,7 +53,7 @@ export default class Cropper extends React.Component {
   }
 
   onLoad = evt => {
-    let box = this.refs.box.getBoundingClientRect()
+    let box = this.box.getBoundingClientRect()
     this.setState(
       {
         imageLoaded: true,
@@ -61,7 +61,7 @@ export default class Cropper extends React.Component {
         height: box.height
       },
       () => {
-        let img = this.refs.image
+        let img = this.image
         this.props.onImageLoaded && this.props.onImageLoaded(img)
       }
     )
@@ -71,8 +71,8 @@ export default class Cropper extends React.Component {
     return new Promise((resolve, reject) => {
       let img = new Image()
       img.onload = () => {
-        let canvas = this.refs.canvas
-        let img = this.refs.image
+        let canvas = this.canvas
+        let img = this.image
         let ctx = canvas.getContext('2d')
         let [xScale, yScale] = [
           img.naturalWidth / this.state.width,
@@ -122,7 +122,7 @@ export default class Cropper extends React.Component {
   render() {
     return (
       <div
-        ref="box"
+        ref={e => (this.box = e)}
         className="Cropper"
         style={{
           minWidth: this.props.width,
@@ -131,12 +131,12 @@ export default class Cropper extends React.Component {
       >
         <canvas
           className="Cropper-canvas"
-          ref="canvas"
+          ref={e => (this.canvas = e)}
           width={this.props.width}
           height={this.props.height}
         />
         <img
-          ref="image"
+          ref={e => (this.image = e)}
           src={this.state.url}
           className="Cropper-image"
           onLoad={this.onLoad}

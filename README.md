@@ -6,82 +6,73 @@ For example usage check out the docs folder. Demo: http://instructure-react.gith
 ###Basic usage###
 
 ``` javascript
-import React, { Component } from 'react';
+import React from 'react'
+import Cropper from 'react-crop'
 
-import Cropper from 'react-crop';
-import 'react-crop/css';
+export default class Wrapper extends React.Component {
+  state = {
+    image: null,
+    previewUrl: null
+  }
 
-export default class MyComponent extends Component {
-    constructor() {
-        super();
+  onChange = evt => {
+    this.setState({
+      image: evt.target.files[0]
+    })
+  }
 
-        this.state = {
-            image: null,
-            previewImage: null
-        };
+  crop = () => {
+    return this.cropper.cropImage().then(image => {
+      this.setState({
+        previewUrl: window.URL.createObjectURL(image)
+      })
+    })
+  }
+
+  clear = () => {
+    this.file.value = null
+    this.setState({
+      previewUrl: null,
+      image: null
+    })
+  }
+
+  imageLoaded(img) {
+    if (
+      img.naturalWidth &&
+      img.naturalWidth < 262 &&
+      img.naturalHeight &&
+      img.naturalHeight < 147
+    ) {
+      this.crop()
     }
+  }
 
-    onChange(evt) {
-        this.setState({
-            image: evt.target.files[0]
-        })
-    }
-
-    async crop() {
-        let image = await this.refs.crop.cropImage()
-        this.setState({
-            previewUrl: window.URL.createObjectURL(image)
-        })
-    }
-
-    clear() {
-        this.refs.file.value = null
-        this.setState({
-            previewUrl: null,
-            image: null
-        })
-    }
-
-    imageLoaded(img) {
-        if (img.naturalWidth && img.naturalWidth < 262 &&
-            img.naturalHeight && img.naturalHeight < 147) {
-            this.crop()
-        }
-    }
-
-    render() {
-        return (
+  render() {
+    return (
+      <div>
+        <input ref={e => this.file = e} type="file" onChange={this.onChange} />
+        <div className="Wrapper">
+          {this.state.image && (
             <div>
-                <input ref='file' type='file' onChange={this.onChange} />
-
-                {
-
-                    this.state.image &&
-
-                    <div>
-                        <Cropper
-                            ref='crop'
-                            image={this.state.image}
-                            width={100}
-                            height={80}
-                            onImageLoaded={this.imageLoaded}
-                        />
-
-                        <button onClick={this.crop}>Crop</button>
-                        <button onClick={this.clear}>Clear</button>
-                    </div>
-
-                }
-
-                {
-                    this.state.previewUrl &&
-
-                    <img src={this.state.previewUrl} />
-                }
-
+              <Cropper
+                ref={e => this.cropper = e}
+                image={this.state.image}
+                width={WIDTH}
+                height={HEIGHT}
+                onImageLoaded={this.imageLoaded}
+              />
             </div>
-        );
-    }
+          )}
+        </div>
+        <div>
+          <button onClick={this.crop}>Crop</button>
+          <button onClick={this.clear}>Clear</button>
+        </div>
+        {this.state.previewUrl && <img src={this.state.previewUrl} />}
+      </div>
+    )
+  }
 }
 ```
 
