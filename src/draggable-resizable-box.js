@@ -1,8 +1,7 @@
-import PropTypes from 'prop-types';
+import PropTypes from 'prop-types'
 import React from 'react'
 
 export default class DraggableResizableBoxextends extends React.Component {
-
   static propTypes = {
     aspectRatio: PropTypes.number.isRequired,
     width: PropTypes.number.isRequired,
@@ -15,17 +14,17 @@ export default class DraggableResizableBoxextends extends React.Component {
     heightLabel: PropTypes.string,
     offsetXLabel: PropTypes.string,
     offsetYLabel: PropTypes.string
-  };
+  }
 
   static defaultProps = {
     widthLabel: 'Width',
     heightLabel: 'Height',
     offsetXLabel: 'Offset X',
     offsetYLabel: 'Offset Y'
-  };
+  }
 
   constructor(props, context) {
-    super(props, context);
+    super(props, context)
     let [width, height] = this.preserveAspectRatio(props.width, props.height)
     let centerYOffset = (props.height - height) / 2
     let centerXOffset = (props.width - width) / 2
@@ -37,7 +36,7 @@ export default class DraggableResizableBoxextends extends React.Component {
       right: centerXOffset,
       width: width,
       height: height
-    };
+    }
   }
 
   componentDidMount() {
@@ -46,13 +45,16 @@ export default class DraggableResizableBoxextends extends React.Component {
     document.addEventListener('touchmove', this.eventMove)
     document.addEventListener('touchend', this.eventEnd)
     document.addEventListener('keydown', this.handleKey)
-    this.props.onChange({
+    this.props.onChange(
+      {
         top: this.state.top,
         left: this.state.left
-    }, {
-      width: this.state.width,
-      height: this.state.height
-    })
+      },
+      {
+        width: this.state.width,
+        height: this.state.height
+      }
+    )
   }
 
   componentWillUnmount() {
@@ -63,13 +65,16 @@ export default class DraggableResizableBoxextends extends React.Component {
     document.removeEventListener('keydown', this.handleKey)
   }
 
-  calculateDimensions = ({top, left, bottom, right}) => {
-    return {width: this.props.width - left - right, height: this.props.height - top - bottom}
-  };
+  calculateDimensions = ({ top, left, bottom, right }) => {
+    return {
+      width: this.props.width - left - right,
+      height: this.props.height - top - bottom
+    }
+  }
 
   // If you do this, be careful of constraints
   preserveAspectRatio = (width, height) => {
-    if(this.props.minConstraints) {
+    if (this.props.minConstraints) {
       width = Math.max(width, this.props.minConstraints[0])
       height = Math.max(height, this.props.minConstraints[1])
     }
@@ -82,38 +87,39 @@ export default class DraggableResizableBoxextends extends React.Component {
     } else {
       return [width, height]
     }
-  };
+  }
 
-  constrainBoundary = (side) => {
+  constrainBoundary = side => {
     return side < 0 ? 0 : side
-  };
+  }
 
-  getClientCoordinates = (evt) => {
-    return evt.touches ? {
-      clientX: evt.touches[0].clientX,
-      clientY: evt.touches[0].clientY
-    } :
-    {
-      clientX: evt.clientX,
-      clientY: evt.clientY
-    }
-  };
+  getClientCoordinates = evt => {
+    return evt.touches
+      ? {
+          clientX: evt.touches[0].clientX,
+          clientY: evt.touches[0].clientY
+        }
+      : {
+          clientX: evt.clientX,
+          clientY: evt.clientY
+        }
+  }
 
-  eventMove = (evt) => {
+  eventMove = evt => {
     if (this.state.resizing) {
       this.onResize(evt)
     } else if (this.state.moving) {
       this.eventMoveBox(evt)
     }
-  };
+  }
 
-  eventEnd = (evt) => {
+  eventEnd = evt => {
     if (this.state.resizing) {
       this.stopResize(evt)
     } else if (this.state.moving) {
       this.stopMove(evt)
     }
-  };
+  }
 
   // Resize methods
   startResize = (corner, event) => {
@@ -123,11 +129,11 @@ export default class DraggableResizableBoxextends extends React.Component {
       resizing: true,
       corner
     })
-  };
+  }
 
   stopResize = () => {
-    this.setState({resizing: false})
-  };
+    this.setState({ resizing: false })
+  }
 
   // resize strategies
   nw = (mousePos, boxPos) => {
@@ -136,11 +142,14 @@ export default class DraggableResizableBoxextends extends React.Component {
       left: this.constrainBoundary(mousePos.clientX - boxPos.left)
     })
     let dimensions = this.calculateDimensions(pos)
-    let [width, height] = this.preserveAspectRatio(dimensions.width, dimensions.height)
+    let [width, height] = this.preserveAspectRatio(
+      dimensions.width,
+      dimensions.height
+    )
     pos.top = this.props.height - pos.bottom - height
     pos.left = this.props.width - pos.right - width
     return pos
-  };
+  }
 
   ne = (mousePos, boxPos) => {
     let pos = Object.assign({}, this.state, {
@@ -148,11 +157,14 @@ export default class DraggableResizableBoxextends extends React.Component {
       right: this.constrainBoundary(boxPos.right - mousePos.clientX)
     })
     let dimensions = this.calculateDimensions(pos)
-    let [width, height] = this.preserveAspectRatio(dimensions.width, dimensions.height)
+    let [width, height] = this.preserveAspectRatio(
+      dimensions.width,
+      dimensions.height
+    )
     pos.top = this.props.height - pos.bottom - height
     pos.right = this.props.width - pos.left - width
     return pos
-  };
+  }
 
   se = (mousePos, boxPos) => {
     let pos = Object.assign({}, this.state, {
@@ -160,11 +172,14 @@ export default class DraggableResizableBoxextends extends React.Component {
       right: this.constrainBoundary(boxPos.right - mousePos.clientX)
     })
     let dimensions = this.calculateDimensions(pos)
-    let [width, height] = this.preserveAspectRatio(dimensions.width, dimensions.height)
+    let [width, height] = this.preserveAspectRatio(
+      dimensions.width,
+      dimensions.height
+    )
     pos.bottom = this.props.height - pos.top - height
     pos.right = this.props.width - pos.left - width
     return pos
-  };
+  }
 
   sw = (mousePos, boxPos) => {
     let pos = Object.assign({}, this.state, {
@@ -172,29 +187,41 @@ export default class DraggableResizableBoxextends extends React.Component {
       left: this.constrainBoundary(mousePos.clientX - boxPos.left)
     })
     let dimensions = this.calculateDimensions(pos)
-    let [width, height] = this.preserveAspectRatio(dimensions.width, dimensions.height)
+    let [width, height] = this.preserveAspectRatio(
+      dimensions.width,
+      dimensions.height
+    )
     pos.bottom = this.props.height - pos.top - height
     pos.left = this.props.width - pos.right - width
     return pos
-  };
+  }
 
-  onResize = (event) => {
+  onResize = event => {
     let box = this.refs.box.parentElement.parentElement.getBoundingClientRect()
     let coordinates = this.getClientCoordinates(event)
     let position = this[this.state.corner](coordinates, box)
     this.resize(position, coordinates)
-  };
+  }
 
-  controlsResize = (event) => {
+  controlsResize = event => {
     let box = this.refs.box.parentElement.parentElement.getBoundingClientRect()
-    let width = event.target.name === 'width' ? +event.target.value : +event.target.value * this.props.aspectRatio
-    let height = event.target.name === 'height' ? +event.target.value : +event.target.value / this.props.aspectRatio
+    let width =
+      event.target.name === 'width'
+        ? +event.target.value
+        : +event.target.value * this.props.aspectRatio
+    let height =
+      event.target.name === 'height'
+        ? +event.target.value
+        : +event.target.value / this.props.aspectRatio
     let dimensions = this.preserveAspectRatio(width, height)
     width = dimensions[0]
     height = dimensions[1]
 
-    if (width > box.width - this.state.left ||
-        height > box.height - this.state.top) return
+    if (
+      width > box.width - this.state.left ||
+      height > box.height - this.state.top
+    )
+      return
 
     let widthDifference = this.state.width - width
     let heightDifference = this.state.height - height
@@ -208,51 +235,56 @@ export default class DraggableResizableBoxextends extends React.Component {
     }
 
     this.resize(pos, coordinates)
-  };
+  }
 
   resize = (position, coordinates) => {
     let dimensions = this.calculateDimensions(position)
-    var widthChanged = dimensions.width !== this.state.width, heightChanged = dimensions.height !== this.state.height
+    var widthChanged = dimensions.width !== this.state.width,
+      heightChanged = dimensions.height !== this.state.height
     if (!widthChanged && !heightChanged) return
 
     this.setState(Object.assign({}, coordinates, position, dimensions), () => {
-      this.props.onChange({
-        top: position.top,
-        left: position.left
-      }, dimensions)
+      this.props.onChange(
+        {
+          top: position.top,
+          left: position.left
+        },
+        dimensions
+      )
     })
-  };
+  }
 
   // Move methods
-  startMove = (evt) => {
-    let {clientX, clientY} = this.getClientCoordinates(evt)
+  startMove = evt => {
+    let { clientX, clientY } = this.getClientCoordinates(evt)
     this.setState({
       moving: true,
       clientX: clientX,
       clientY: clientY
     })
-  };
+  }
 
-  stopMove = (evt) => {
+  stopMove = evt => {
     this.setState({
       moving: false
     })
-  };
+  }
 
-  eventMoveBox = (evt) => {
+  eventMoveBox = evt => {
     evt.preventDefault()
-    let {clientX, clientY} = this.getClientCoordinates(evt)
+    let { clientX, clientY } = this.getClientCoordinates(evt)
     let movedX = clientX - this.state.clientX
     let movedY = clientY - this.state.clientY
 
     this.moveBox(clientX, clientY, movedX, movedY)
-  };
+  }
 
-  controlsMoveBox = (evt) => {
-    let movedX = evt.target.name === 'x' ? evt.target.value - this.state.left : 0
+  controlsMoveBox = evt => {
+    let movedX =
+      evt.target.name === 'x' ? evt.target.value - this.state.left : 0
     let movedY = evt.target.name === 'y' ? evt.target.value - this.state.top : 0
     this.moveBox(0, 0, movedX, movedY)
-  };
+  }
 
   moveBox = (clientX, clientY, movedX, movedY) => {
     let position = {
@@ -275,20 +307,34 @@ export default class DraggableResizableBoxextends extends React.Component {
       position.left = this.props.width - this.state.width
     }
 
-    this.setState(Object.assign({}, {
-      clientX: clientX,
-      clientY: clientY
-    }, position), () => {
-      this.props.onChange({
-        top: position.top,
-        left: position.left
-      }, this.calculateDimensions(position))
-    })
-  };
+    this.setState(
+      Object.assign(
+        {},
+        {
+          clientX: clientX,
+          clientY: clientY
+        },
+        position
+      ),
+      () => {
+        this.props.onChange(
+          {
+            top: position.top,
+            left: position.left
+          },
+          this.calculateDimensions(position)
+        )
+      }
+    )
+  }
 
-  keyboardResize = (change) => {
-    if (this.state.right - change < 0) { return }
-    if (this.state.bottom - change < 0) { return }
+  keyboardResize = change => {
+    if (this.state.right - change < 0) {
+      return
+    }
+    if (this.state.bottom - change < 0) {
+      return
+    }
 
     const [width, height] = this.preserveAspectRatio(
       this.state.width + change,
@@ -303,9 +349,9 @@ export default class DraggableResizableBoxextends extends React.Component {
       width,
       height
     })
-  };
+  }
 
-  handleKey = (event) => {
+  handleKey = event => {
     // safari doesn't support event.key, so fall back to keyCode
     if (event.shiftKey) {
       if (event.key === 'ArrowUp' || event.keyCode === 38) {
@@ -336,7 +382,7 @@ export default class DraggableResizableBoxextends extends React.Component {
         event.preventDefault()
       }
     }
-  };
+  }
 
   render() {
     let style = {
@@ -346,7 +392,7 @@ export default class DraggableResizableBoxextends extends React.Component {
       right: this.state.right,
       bottom: this.state.bottom
     }
-    let {width, height} = this.calculateDimensions(this.state)
+    let { width, height } = this.calculateDimensions(this.state)
     let topStyle = {
       height: this.state.top
     }
@@ -365,68 +411,80 @@ export default class DraggableResizableBoxextends extends React.Component {
     }
 
     return (
-      <div ref='box' className='DraggableResizable'>
-        <div className='DraggableResizable-controls'>
+      <div ref="box" className="DraggableResizable">
+        <div className="DraggableResizable-controls">
           <label>
             {this.props.offsetXLabel}
             <input
-              name='x'
+              name="x"
               value={Math.round(this.state.left)}
               onChange={this.controlsMoveBox}
               tabIndex="-1"
-              type='number' />
+              type="number"
+            />
           </label>
           <label>
             {this.props.offsetYLabel}
             <input
-              name='y'
+              name="y"
               value={Math.round(this.state.top)}
               onChange={this.controlsMoveBox}
               tabIndex="-1"
-              type='number' />
+              type="number"
+            />
           </label>
           <label>
             {this.props.widthLabel}
             <input
-              name='width'
+              name="width"
               value={Math.round(width)}
-              type='number'
+              type="number"
               tabIndex="-1"
-              onChange={this.controlsResize} />
+              onChange={this.controlsResize}
+            />
           </label>
           <label>
             {this.props.heightLabel}
             <input
               value={Math.round(height)}
-              type='number'
-              name='height'
+              type="number"
+              name="height"
               tabIndex="-1"
-              onChange={this.controlsResize} />
+              onChange={this.controlsResize}
+            />
           </label>
         </div>
-        <div className='DraggableResizable-top' style={topStyle}></div>
-        <div className='DraggableResizable-left' style={leftStyle}></div>
-        <div style={style} onMouseDown={this.startMove} onTouchStart={this.startMove}>
+        <div className="DraggableResizable-top" style={topStyle} />
+        <div className="DraggableResizable-left" style={leftStyle} />
+        <div
+          style={style}
+          onMouseDown={this.startMove}
+          onTouchStart={this.startMove}
+        >
           {this.props.children}
-          <div className='resize-handle resize-handle-se'
+          <div
+            className="resize-handle resize-handle-se"
             onMouseDown={this.startResize.bind(null, 'se')}
-            onTouchStart={this.startResize.bind(null, 'se')}>
-          </div>
-          <div className='resize-handle resize-handle-ne'
+            onTouchStart={this.startResize.bind(null, 'se')}
+          />
+          <div
+            className="resize-handle resize-handle-ne"
             onMouseDown={this.startResize.bind(null, 'ne')}
-            onTouchStart={this.startResize.bind(null, 'ne')}>
-          </div>
-          <div className='resize-handle resize-handle-sw'
+            onTouchStart={this.startResize.bind(null, 'ne')}
+          />
+          <div
+            className="resize-handle resize-handle-sw"
             onMouseDown={this.startResize.bind(null, 'sw')}
-            onTouchStart={this.startResize.bind(null, 'sw')}>
-          </div>
-          <div className='resize-handle resize-handle-nw'
+            onTouchStart={this.startResize.bind(null, 'sw')}
+          />
+          <div
+            className="resize-handle resize-handle-nw"
             onMouseDown={this.startResize.bind(null, 'nw')}
-            onTouchStart={this.startResize.bind(null, 'nw')}>
-          </div>
+            onTouchStart={this.startResize.bind(null, 'nw')}
+          />
         </div>
-        <div className='DraggableResizable-right' style={rightStyle}></div>
-        <div className='DraggableResizable-bottom' style={bottomStyle}></div>
+        <div className="DraggableResizable-right" style={rightStyle} />
+        <div className="DraggableResizable-bottom" style={bottomStyle} />
       </div>
     )
   }
